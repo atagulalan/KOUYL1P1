@@ -1,0 +1,88 @@
+﻿<Window x:Class="yoneticipanel.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:yoneticipanel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="900" Width="1200">
+
+    <Grid  Width="1200" Height="900" OpacityMask="Black">
+        <Grid.Background>
+            <ImageBrush ImageSource="wp.jpg" Stretch="UniformToFill"/>
+        </Grid.Background>
+        <Label Content="Yeni Kayıt Ekle" HorizontalAlignment="Left" Height="40" Margin="70,115,0,0" VerticalAlignment="Top" Width="150" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="18" RenderTransformOrigin="1.831,0.495" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF733434" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Button Content="Yeki Kitap Kaydı" HorizontalAlignment="Left" Height="45" Margin="70,160,0,0" VerticalAlignment="Top" Width="150" RenderTransformOrigin="2.631,0.778" Click="Button_Click_3" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14">
+            <Button.Background>
+                <SolidColorBrush Color="#FF9DBA1D" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="Yeni Kullanıcı Kaydı" HorizontalAlignment="Left" Height="45" Margin="70,210,0,0" VerticalAlignment="Top" Width="150" Click="Button_Click_4" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14">
+            <Button.Background>
+                <SolidColorBrush Color="#FF9DBA1D" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="Tüm Kullanıcıları Listele" HorizontalAlignment="Left" Height="45" Margin="70,380,0,0" VerticalAlignment="Top" Width="150" RenderTransformOrigin="0.503,-0.893" Click="Button_Click_1" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14">
+            <Button.Background>
+                <SolidColorBrush Color="#FF107A61" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="En İyi Kitaplar" HorizontalAlignment="Left" Height="45" Margin="70,430,0,0" VerticalAlignment="Top" Width="150" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14" Click="Button_Click_8">
+            <Button.Background>
+                <SolidColorBrush Color="#FF107A61" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="Tüm Kitapları Listele" HorizontalAlignment="Left" Height="45" Margin="70,330,0,0" VerticalAlignment="Top" Width="150" Click="Button_Click" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14">
+            <Button.Background>
+                <SolidColorBrush Color="#FF107A61" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Label Content="Kayıtları Listele" HorizontalAlignment="Left" Height="40" Margin="70,285,0,0" VerticalAlignment="Top" Width="150" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="18" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF733434" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="Kayıt Sil" HorizontalAlignment="Left" Height="40" Margin="70,610,0,0" VerticalAlignment="Top" Width="150" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="18" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF733434" Opacity="0.4"/>
+            </Label.Background>
+        </Label>
+        <Button Content="Kitap Kaydı Sil" HorizontalAlignment="Left" Height="45" Margin="70,655,0,0" VerticalAlignment="Top" Width="150" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14" Click="Button_Click_6">
+            <Button.Background>
+                <SolidColorBrush Color="#FF43174C" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="Kullanıcı Kaydı Sil" HorizontalAlignment="Left" Height="45" Margin="70,705,0,0" VerticalAlignment="Top" Width="150" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14" Click="Button_Click_7">
+            <Button.Background>
+                <SolidColorBrush Color="#FF43174C" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="En Popüler Kitaplar" HorizontalAlignment="Left" Height="45" Margin="70,480,0,0" VerticalAlignment="Top" Width="150" Click="Button_Click_2" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14">
+            <Button.Background>
+                <SolidColorBrush Color="#FF107A61" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Button Content="En Yeni Kitaplar" HorizontalAlignment="Left" Height="45" Margin="70,530,0,0" VerticalAlignment="Top" Width="150" Click="Button_Click_5" OpacityMask="Black" Foreground="White" BorderBrush="Black" FontSize="14">
+            <Button.Background>
+                <SolidColorBrush Color="#FF107A61" Opacity="0.5"/>
+            </Button.Background>
+        </Button>
+        <Label Content="Yönetici Paneli" HorizontalAlignment="Left" Height="105" Margin="225,70,0,0" VerticalAlignment="Top" Width="975" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" FontSize="48" BorderBrush="Black" Foreground="White" Background="{x:Null}"/>
+        <DataGrid Name="dtGrid" ItemsSource="{Binding}" HorizontalAlignment="Left" Height="540" Margin="270,210,0,0" VerticalAlignment="Top" Width="865" Foreground="White" BorderBrush="#FF202020">
+            <DataGrid.Background>
+                <SolidColorBrush Color="#FF323232" Opacity="0.525"/>
+            </DataGrid.Background>
+        </DataGrid>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="40" Margin="70,115,0,0" VerticalAlignment="Top" Width="150"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="40" Margin="70,285,0,0" VerticalAlignment="Top" Width="150"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="40" Margin="70,610,0,0" VerticalAlignment="Top" Width="150"/>
+
+
+
+    </Grid>
+
+</Window>

@@ -1,0 +1,21 @@
+﻿<Window x:Class="Bookmark.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bookmark"
+        mc:Ignorable="d"
+        x:Name="sada"
+        Title="" Height="431" Width="438" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="x.ico" TextOptions.TextFormattingMode="Display" TextOptions.TextHintingMode="Animated">
+    <Grid Height="393">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Button Style="{StaticResource TabButton}" x:Name="loginButton" Content="Giriş Yap" Margin="14,0,13.571,111" VerticalAlignment="Bottom" Click="openLoginForm" HorizontalContentAlignment="Center" FontSize="22" Padding="1" Cursor="Hand" Grid.Column="1" FontWeight="Normal" FontFamily="Montserrat"/>
+        <Label x:Name="AYRAC" Content="Ayraç" HorizontalAlignment="Center" Margin="33,40,33.286,0" Width="366" FontFamily="Montserrat" FontSize="74" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Light" Height="104" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+        <Button Style="{StaticResource TabButtonPink}" x:Name="registerButton" Content="Kayıt Ol" Margin="14,0,13.571,50" VerticalAlignment="Bottom" Click="openRegisterForm" FontSize="22" VerticalContentAlignment="Center" Padding="1" Cursor="Hand" Grid.Column="1" FontFamily="Montserrat"/>
+        <Label x:Name="description" Content="kitap, yolunu aydınlatır." HorizontalAlignment="Center" Margin="33,0,34.286,211" VerticalAlignment="Bottom" Height="41" Width="365" FontFamily="Montserrat" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="23" FontWeight="Thin" Grid.ColumnSpan="3"/>
+    </Grid>
+</Window>

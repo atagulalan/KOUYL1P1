@@ -1,0 +1,101 @@
+﻿<Window x:Class="yoneticipanel.kitap_ekle"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:yoneticipanel"
+        mc:Ignorable="d"
+        Title="kitap_ekle" Height="491.4" Width="513.2">
+    <Grid Margin="0,0,4.2,-9.2">
+        <Grid.Background>
+            <ImageBrush ImageSource="wp.jpg"></ImageBrush>
+        </Grid.Background>
+        <Label Content="Yeni Kitap Kaydı" HorizontalAlignment="Left" Height="80" Margin="23,10,0,0" VerticalAlignment="Top" Width="452" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="36" BorderBrush="Black" Foreground="White" Background="{x:Null}"/>
+        <Label Content="isbn" HorizontalAlignment="Left" Height="31" Margin="23,95,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="book title" HorizontalAlignment="Left" Height="31" Margin="23,132,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="book author" HorizontalAlignment="Left" Height="31" Margin="23,169,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="year of publication" HorizontalAlignment="Left" Height="31" Margin="23,206,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="publisher" HorizontalAlignment="Left" Height="31" Margin="23,243,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="img url s" HorizontalAlignment="Left" Height="31" Margin="23,280,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="img url m" HorizontalAlignment="Left" Height="31" Margin="23,317,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <Label Content="img url l" HorizontalAlignment="Left" Height="31" Margin="23,354,0,0" VerticalAlignment="Top" Width="147" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" BorderBrush="Black">
+            <Label.Background>
+                <SolidColorBrush Color="#FF35775E" Opacity="0.5"/>
+            </Label.Background>
+        </Label>
+        <TextBox x:Name="isbn" HorizontalAlignment="Left" Height="31" Margin="175,95,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="title" HorizontalAlignment="Left" Height="31" Margin="175,132,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="author" HorizontalAlignment="Left" Height="31" Margin="175,169,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="year" HorizontalAlignment="Left" Height="31" Margin="175,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="publisher" HorizontalAlignment="Left" Height="31" Margin="175,243,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="imgs" HorizontalAlignment="Left" Height="31" Margin="175,280,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="imgm" HorizontalAlignment="Left" Height="31" Margin="175,317,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <TextBox x:Name="imgl" HorizontalAlignment="Left" Height="31" Margin="175,354,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="300" BorderBrush="Black" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+            <TextBox.Background>
+                <SolidColorBrush Color="#FF7C807B" Opacity="0.5"/>
+            </TextBox.Background>
+        </TextBox>
+        <Button Content="Kaydet" Margin="210,395,208,37" Click="Button_Click" Height="25" Foreground="White" BorderBrush="Black">
+            <Button.Background>
+                <SolidColorBrush Color="#FF1E7614" Opacity="0.8"/>
+            </Button.Background>
+        </Button>
+
+    </Grid>
+</Window>

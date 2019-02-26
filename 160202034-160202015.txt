@@ -1,0 +1,2433 @@
+////////////////////////////////ANA PROGRAM
+///////////////////////App.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace Bookmark
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+        // ŞİFRELERE DİREK OLARAK ERİŞEMEDİĞİMİZ İÇİN ŞİFRE OLUP OLMADIĞINI
+        // KONTROL EDİP (ÜST ÜSTE ELEMAN KOYMADIĞIMIZDAN GEREKSİZ GÖRDÜĞÜMÜZ) zINDEX
+        // PROPERTYSİNİ 1 VEYA 2 İLE DEĞİŞTİRİYORUZ. XAML DOSYASINA DA 2 İSE 
+        // YUKARI ÇIKMASI, AKSİ HALDE AŞAĞI İNMESİ GEREKTİĞİNİ YAZIYORUZ.
+        // BİRAZ HİLE GİBİ GÖZÜKEBİLİR, ANCAK PASSWORD PROPERTY'SİNE ERİŞMENİN
+        // TEK YOLU BU.
+        private void OnPasswordChanged(object sender, RoutedEventArgs e)
+        {
+            PasswordBox pb = sender as PasswordBox;
+            Panel.SetZIndex(pb, (!string.IsNullOrEmpty(pb.Password)) ? 1 : 2);
+        }
+    }
+
+    
+}
+
+
+///////////////////////BookCover.xaml.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace Bookmark
+{
+    /// <summary>
+    /// Interaction logic for BookCover.xaml
+    /// </summary>
+    public partial class BookCover : UserControl
+    {
+        public string isbn;
+        public string bookname;
+        public string stars;
+        public string votecount;
+        public string image;
+        public string author;
+        public string publisher;
+        public string date;
+        public string yearofpublication;
+
+        public string Publisher
+        {
+            get { return publisher; }
+            set { publisher = value; }
+        }
+
+        public string Date
+        {
+            get { return date; }
+            set { date = value; }
+        }
+    
+        public string YearOfPublication
+        {
+            get { return yearofpublication; }
+            set { yearofpublication = value; }
+        }
+
+        public string Isbn
+        {
+            get { return isbn; }
+            set { isbn = value; }
+        }
+
+        public string Author
+        {
+            get { return author; }
+            set { author = value; }
+        }
+
+        public string BookName
+        {
+            get { return bookname; }
+            set { bookname = value; }
+        }
+
+        public string Stars
+        {
+            get { return stars; }
+            set { stars = value; }
+        }
+
+        public string VoteCount
+        {
+            get { return votecount; }
+            set { votecount = value; }
+        }
+
+        public string Image
+        {
+            get { return image; }
+            set { image = value; }
+        }
+
+
+        public void getImage(string url)
+        {
+            if (url!=null)
+            {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(url, UriKind.Absolute);
+                bitmap.EndInit();
+                bgimage.Source = bitmap;
+            }
+            
+        }
+
+        public BookCover()
+        {
+            InitializeComponent();
+        }
+
+        public void cek()
+        {
+            this.Dispatcher.Invoke(() =>
+            { 
+                if (isbn!="")
+                {
+                    allCons.Visibility = Visibility.Visible;
+                    getImage(image);
+                    label.Text = bookname;
+                    label1.Content = votecount + " Oy";
+                    if (stars != "")
+                    {
+                        int intStars = (int)(Convert.ToDouble(stars)/2);
+                        if (intStars > 0)
+                        {
+                            star1.Opacity = 1;
+                            if (intStars > 1)
+                            {
+                                star2.Opacity = 1;
+                                if (intStars > 2)
+                                {
+                                    star3.Opacity = 1;
+                                    if (intStars > 3)
+                                    {
+                                        star4.Opacity = 1;
+                                        if (intStars > 4)
+                                        {
+                                            star5.Opacity = 1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    allCons.Visibility = Visibility.Hidden;
+                }
+            });
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            cek();
+        }
+    }
+}
+
+///////////////////////BookInner.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
+using System.Threading;
+using System.ComponentModel;
+
+namespace Bookmark {
+    /// <summary>
+    /// Interaction logic for BookInner.xaml
+    /// </summary>
+    public partial class BookInner : Window {
+        public MySqlConnection connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+        public string pIsbn;
+        public int userVote;
+        Books cagiran;
+        public bool cagirildi = false;
+
+        public void getImage(string url) {
+            if (url != null) {
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(url, UriKind.Absolute);
+                bitmap.EndInit();
+                bgimage.Source = bitmap;
+            }
+
+        }
+
+        public BookInner() {
+            InitializeComponent();
+        }
+
+        public void disableButtons(int selected) {
+            Button[] buts = new Button[] { oyla1, oyla2, oyla3, oyla4, oyla5, oyla6, oyla7, oyla8, oyla9, oyla10 };
+            for (int i = 0; i < 10; i++) {
+                buts[i].IsEnabled = false;
+            }
+            buts[selected - 1].BorderBrush = new SolidColorBrush(Color.FromArgb(255, 248, 110, 143));
+        }
+
+        public void isle(string[] values) {
+            /*
+             * 0 - Isbn
+             * 1 - BookName
+             * 2 - Stars
+             * 3 - VoteCount
+             * 4 - Image
+             * 5 - Author
+             * 6 - Publisher
+             * 7 - Year Of Publication
+             * 8 - Date
+             * 9 - Ready State
+             */
+            pIsbn = values[0];
+            isbn.Content = "ISBN: " + values[0];
+            bookname.Text = values[1];
+            kitapadi.Content = "Kitap Adı: " + values[1];
+            oy.Content = "Oy: " + values[2] + " / 10";
+            oysayisi.Content = "Oy Sayısı: " + values[3];
+            getImage(values[4]);
+            yazar.Content = "Yazar: " + values[5];
+            yayimci.Content = "Yayımcı: " + values[6];
+            yayinyili.Content = "Yayım Yılı: " + values[7];
+            eklenmetarihi.Content = "Eklenme Tarihi: " + values[8];
+            if (values[9] == "notReady") {
+                kitabiOku.IsEnabled = false;
+                hataSebebi.Visibility = Visibility.Visible;
+                kitabiOku.Background = new SolidColorBrush(Color.FromArgb(255, 200, 200, 200));
+            } else {
+                kitabiOku.IsEnabled = true;
+                hataSebebi.Visibility = Visibility.Hidden;
+                kitabiOku.Background = new SolidColorBrush(Color.FromArgb(255, 248, 110, 143));
+            }
+            connection.Open();
+            string sorgu = "SELECT book_rating FROM ratings WHERE user_id=@k AND isbn=@i LIMIT 1";
+            MySqlCommand command = new MySqlCommand(sorgu, connection);
+            MySqlDataReader dr;
+            command.Parameters.AddWithValue("@k", Properties.Settings.Default.userID);
+            command.Parameters.AddWithValue("@i", values[0]);
+            dr = command.ExecuteReader();
+            if (dr.Read()) {
+                userVote = dr.GetInt32("book_rating");
+                Console.WriteLine(userVote);
+                disableButtons(userVote);
+            } else {
+                userVote = -1;
+            }
+            connection.Close();
+        }
+
+        public BookInner(string[] values) {
+            InitializeComponent();
+            isle(values);
+        }
+
+        public BookInner(Books cgr, string[] values) {
+            InitializeComponent();
+            cagirildi = true;
+            cagiran = cgr;
+            isle(values);
+        }
+
+        private void oyla(object sender, RoutedEventArgs e) {
+            string s = (sender as Button).Content.ToString();
+            connection.Open();
+            string sorgu = "INSERT INTO ratings (user_id, isbn, book_rating) Values (@userid, @isbn, @book_rating)";
+            MySqlCommand command = new MySqlCommand(sorgu, connection);
+            command.Parameters.AddWithValue("@userid", Properties.Settings.Default.userID);
+            command.Parameters.AddWithValue("@isbn", pIsbn);
+            command.Parameters.AddWithValue("@book_rating", s);
+            command.ExecuteNonQuery();
+            connection.Close();
+            Console.WriteLine(s);
+            userVote = Int32.Parse(s);
+            disableButtons(userVote);
+            Properties.Settings.Default.userOy = (Int32.Parse(Properties.Settings.Default.userOy) + 1).ToString();
+
+            //MessageBox.Show("Oylanan Toplam Kitap Sayısı : " + Properties.Settings.Default.userOy);
+            if (cagirildi) {
+                cagiran.oyArttir();
+            }
+        }
+
+        private void kitabiOku_Click(object sender, RoutedEventArgs e) {
+            PDFRead pf = new PDFRead(pIsbn);
+            pf.Show();
+        }
+    }
+}
+
+
+///////////////////////Books.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
+using System.ComponentModel;
+using System.Data;
+
+namespace Bookmark
+{
+    /// <summary>
+    /// Interaction logic for Books.xaml
+    /// </summary>
+    public partial class Books : Window
+    {
+        public MySqlConnection connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+        public BackgroundWorker bw = new BackgroundWorker();
+        public string aramaParamteresi = "";
+        public int nOy = 0;
+
+        public void paginationChanged()
+        {
+            if (bw.IsBusy)
+            {
+                Console.WriteLine("was busy, now not");
+                //bw.CancelAsync();
+            }else
+            {
+                bw.RunWorkerAsync();
+            }
+            
+        }
+
+        private bool OpenConnection()
+        {
+            try
+            {
+                if (connection.State != ConnectionState.Open)
+                {
+                    connection.Open();
+                }
+                return true;
+            }
+            catch (MySqlException ex)
+            {
+                switch (ex.Number)
+                {
+                    case 0:
+                        MessageBox.Show("Cannot connect to server.  Contact administrator");
+                        break;
+
+                    case 1045:
+                        MessageBox.Show("Invalid username/password, please try again");
+                        break;
+                }
+                return false;
+            }
+        }
+
+        public int getPageCount()
+        {
+            var where = aramaParamteresi != "" ? "book_title LIKE '%" + (aramaParamteresi) + "%'" : "1";
+            string query = ("SELECT CEIL(COUNT(*) / 21) as page FROM books WHERE "+where+";");
+            string kk = "1";
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read())
+            {
+                kk = dataReader["page"] + "";
+            }
+            dataReader.Close();
+            connection.Close();
+            int sayi = 0;
+            int.TryParse(kk, out sayi);
+            return sayi;
+        }
+
+        public void getBooks(BookCover[] books, int sayfa)
+        {
+            Console.WriteLine("getbooks cagirildi");
+            disableClick();
+            var where = aramaParamteresi != "" ? "book_title LIKE '%" + (aramaParamteresi) + "%'" : "1";
+            string query = ("SELECT p1.isbn, year_of_publication, publisher, tarih, book_title, book_author, image_url_l, sum(book_rating)/count(book_rating) as yildiz, count(book_rating) as oysayisi FROM (SELECT * FROM `books` WHERE "+ where + " LIMIT " + (sayfa - 1) * 21 + ",21) as p1 LEFT JOIN (SELECT * FROM ratings) as p2 on p1.isbn=p2.isbn GROUP BY p1.isbn;");
+            List<string>[] list = new List<string>[9];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            list[5] = new List<string>();
+            list[6] = new List<string>();
+            list[7] = new List<string>();
+            list[8] = new List<string>();
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read())
+            {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["book_title"] + "");
+                list[2].Add(dataReader["image_url_l"] + "");
+                list[3].Add(dataReader["yildiz"] + "");
+                list[4].Add(dataReader["oysayisi"] + "");
+                list[5].Add(dataReader["book_author"] + "");
+                list[6].Add(dataReader["year_of_publication"] + "");
+                list[7].Add(dataReader["publisher"] + "");
+                list[8].Add(dataReader["tarih"] + "");
+            }
+            dataReader.Close();
+            connection.Close();
+            for (int i = 0; i < 21; i++)
+            {
+                books[i].Isbn = "";
+                books[i].BookName = "";
+                books[i].Image = "";
+                books[i].Stars = "";
+                books[i].VoteCount = "";
+                books[i].Author = "";
+                books[i].Publisher = "";
+                books[i].YearOfPublication = "";
+                books[i].Date = "";
+                books[i].cek();
+            }
+            for (int i = 0; i < list[0].Count; i++)
+            {
+                books[i].Isbn = list[0][i];
+                books[i].BookName = list[1][i];
+                books[i].Image = list[2][i];
+                books[i].Stars = list[3][i] != "" ? list[3][i].Split('.')[0] : "0";
+                books[i].VoteCount = list[4][i];
+                books[i].Author = list[5][i];
+                books[i].YearOfPublication = list[6][i];
+                books[i].Publisher = list[7][i];
+                books[i].Date = list[8][i];
+                books[i].cek();
+            }
+        }
+
+        public Books()
+        {
+            InitializeComponent();
+            bw.DoWork += delegate {
+                BookCover[] books = new BookCover[] { book1, book2, book3, book4, book5, book6, book7, book8, book9, book10, book11, book12, book13, book14, book15, book16, book17, book18, book19, book20, book21 };
+                getBooks(books, pg.n);
+            };
+            bw.RunWorkerCompleted += delegate {
+                Console.WriteLine("BİTTİ");
+                enableClick();
+            };
+            label.Content = "Hoş geldin, " + Properties.Settings.Default.userNick;
+            nOy = Int32.Parse(Properties.Settings.Default.userOy);
+            ileriButonu.Content = nOy+"/10";
+            pg.nmax = getPageCount();
+            pg.bul();
+        }
+
+
+        public void disableClick()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                yukleniyor.Visibility = Visibility.Visible;
+                Tumu.IsEnabled = false;
+            });
+        }
+
+        public void enableClick()
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                yukleniyor.Visibility = Visibility.Hidden;
+                Tumu.IsEnabled = true;
+            });
+        }
+
+        private void araButonu_Click(object sender, RoutedEventArgs e)
+        {
+            aramaParamteresi = kitapAraInput.Text;
+            pg.n = 1;
+            pg.nmax = getPageCount();
+            pg.bul();
+        }
+
+        public void oyArttir() {
+            nOy++;
+            ileriButonu.Content = nOy + "/10";
+            if (nOy >= 10) {
+                ileriButonu.Content = "İlerle";
+            }
+        }
+
+        private void book_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            BookCover selectedBook = (BookCover)sender;
+            Console.WriteLine(selectedBook.Isbn);
+            string[] values = { selectedBook.Isbn, selectedBook.BookName, selectedBook.Stars, selectedBook.VoteCount, selectedBook.Image, selectedBook.Author, selectedBook.Publisher, selectedBook.YearOfPublication, selectedBook.Date, "notReady" };
+            BookInner book = new BookInner(this,values);
+            book.Show();
+        }
+
+        private void ileriButonu_Click(object sender, RoutedEventArgs e) {
+            if (nOy < 10) {
+                MessageBox.Show("Lütfen devam etmeden önce 10 adet kitap oylayın.");
+            } else {
+                Read kitaplar = new Read();
+                kitaplar.Show();
+                this.Hide();
+            }
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e) {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private void kitapAraInput_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter || e.Key == Key.Return) {
+                aramaParamteresi = kitapAraInput.Text;
+                pg.n = 1;
+                pg.nmax = getPageCount();
+                pg.bul();
+            }
+        }
+    }
+}
+
+
+///////////////////////Login.xaml.cs
+
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+
+namespace Bookmark {
+    /// <summary>
+    /// Interaction logic for Login.xaml
+    /// </summary>
+    public partial class Login : Window {
+        public static int oy;
+        public MySqlConnection connection;
+        public MainWindow reelMain;
+        public void hataVer(String s) {
+            textBlock.Text = s;
+        }
+
+        public Login() {
+            InitializeComponent();
+        }
+
+        public Login(MainWindow main) {
+            InitializeComponent();
+            reelMain = main;
+
+        }
+
+        public void login() {
+            connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+            String k = girisKullaniciAdiBox.Text;
+            String s = girisSifreBox.Password;
+
+            Console.WriteLine("Giriş yapılıyor...");
+            if (Regex.IsMatch(k, "^[a-zA-Z0-9]+$") == true) {
+                hataVer("");
+                if (s.Length >= 3) {
+                    hataVer("");
+                    MySqlDataReader dr;
+                    Console.WriteLine("Giriş işlemi başladı...");
+                    connection.Open();
+                    string sorgu = "SELECT * FROM (SELECT * FROM users WHERE nick=@k AND pw=@s) AS realUserTable INNER JOIN (SELECT COUNT(*) as books_read FROM ratings WHERE user_id IN(SELECT user_id FROM users WHERE nick = @k)) AS readBooksTable";
+                    MySqlCommand command = new MySqlCommand(sorgu, connection);
+                    command.Parameters.AddWithValue("@k", k);
+                    command.Parameters.AddWithValue("@s", s);
+                    dr = command.ExecuteReader();
+
+                    if (dr.Read()) {
+                        Properties.Settings.Default.userID = dr.GetString("user_id");
+                        Properties.Settings.Default.userNick = dr.GetString("nick");
+                        oy = dr.GetInt32("books_read");
+                        Properties.Settings.Default.userOy = oy.ToString();
+                        Console.WriteLine(oy);
+                        if (oy >= 10) {
+                            Read kitaplar = new Read();
+                            kitaplar.Show();
+                            this.Hide();
+                        } else {
+                            Books kitaplar = new Books();
+                            kitaplar.Show();
+                            this.Hide();
+                        }
+                    } else {
+                        hataVer("Kullanıcı adı veya şifre hatalı.");
+                    }
+                } else {
+                    hataVer("Kullanıcı adı veya şifre hatalı.");
+                }
+            } else {
+                hataVer("Kullanıcı adı veya şifre hatalı.");
+            }
+            connection.Close();
+            
+        }
+
+        private void girisIslemi(object sender, RoutedEventArgs e) {
+            login();
+        }
+        private void geriGel2(object sender, MouseButtonEventArgs e) {
+            this.Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            try {
+                reelMain.Show();
+            } catch (Exception) {}
+        }
+    }
+}
+
+
+///////////////////////MainWindow.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
+using System.Windows.Threading;
+
+namespace Bookmark {
+    //https://www.codeproject.com/Articles/43438/Connect-C-to-MySQL
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window {
+
+
+
+        public MySqlConnection connection;
+
+        public bool sql(String query) {
+            try {
+                connection.Open();
+            } catch (MySqlException) {
+                return false;
+            }
+
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            cmd.ExecuteNonQuery();
+
+            try {
+                connection.Close();
+            } catch (MySqlException ex) {
+                return false;
+            }
+
+            return true;
+        }
+
+
+        public List<string>[] getUserPoints(string[] selectedBooks) {
+            string cumulativeUnion = "";
+            foreach (var book in selectedBooks) {
+                cumulativeUnion += " union SELECT * FROM `ratings` WHERE isbn=" + book;
+            }
+            cumulativeUnion = cumulativeUnion.Substring(7, cumulativeUnion.Length - 7);
+            string query = ("SELECT * FROM ( SELECT isbn,SUM(rating*count) as point FROM (SELECT user_id, COUNT(user_id) as count FROM (" + cumulativeUnion + ") as userPoints GROUP BY user_id) as userPoints LEFT JOIN (SELECT user_id,book_rating-5 as rating,isbn FROM ratings WHERE user_id IN ( SELECT user_id FROM (" + cumulativeUnion + ") AS userIDs GROUP BY user_id)) as keke ON userPoints.user_id = keke.user_id GROUP BY isbn ) AS allPoints ORDER BY point DESC LIMIT 25");
+            List<string>[] list = new List<string>[2];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            connection.Open();
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["point"] + "");
+            }
+            dataReader.Close();
+            connection.Close();
+            return list;
+        }
+
+        public List<string>[] getAllBooks(int page) {
+            string query = ("");
+            List<string>[] list = new List<string>[2];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            connection.Open();
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["point"] + "");
+            }
+            dataReader.Close();
+            connection.Close();
+            return list;
+        }
+
+
+
+        DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
+
+        private void dispatcherTimer_Tick(object sender, EventArgs e) {
+            if (Properties.Settings.Default.userID != "") {
+                Read kitaplar = new Read();
+                kitaplar.Show();
+                this.Hide();
+            }
+            dispatcherTimer.Stop();
+        }
+
+
+        public MainWindow() {
+            InitializeComponent();
+
+            connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+
+            string[] selectedBooks = new string[] { "0374157065", "0679425608", "3257227329", "3442353866", "0767906918", "0679865691", "0060938412", "9783423114578", "0060930365", "0553062042" };
+            //sql("INSERT INTO users VALUES(NULL, 'yes', '4')");
+            /*
+            List <string>[] keke = getUserPoints(selectedBooks);
+            for(int i = 0; i < keke[0].Count; i++)
+            {
+                Console.WriteLine(keke[0][i] + " " + keke[1][i]);
+                //Console.WriteLine("'"+keke[0][i]+"' ");
+            }
+            */
+
+            dispatcherTimer.Tick += new EventHandler(dispatcherTimer_Tick);
+            dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 1);
+            dispatcherTimer.Start();
+
+        }
+
+        // Ana form kapatıldığında tüm formları kapat
+        protected override void OnClosed(EventArgs e) {
+            base.OnClosed(e);
+            Application.Current.Shutdown();
+        }
+
+        private void openLoginForm(object sender, RoutedEventArgs e) {
+
+            Login girisFormu = new Login(this);
+            girisFormu.Show();
+            this.Hide();
+        }
+
+        private void openRegisterForm(object sender, RoutedEventArgs e) {
+            Register kayitFormu = new Register(this);
+            kayitFormu.Show();
+            this.Hide();
+        }
+    }
+}
+
+
+///////////////////////Pagination.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+
+namespace Bookmark
+{
+    /// <summary>
+    /// Interaction logic for Pagination.xaml
+    /// </summary>
+    public partial class Pagination : UserControl
+    {
+
+        public Pagination()
+        {
+            InitializeComponent();
+        }
+
+        public int nmax = 1;
+        public int n = 1;
+
+        public void removeClasses(Button[] ks)
+        {
+            for (int i = 0; i < 21; i++)
+            {
+                ks[i].IsEnabled = true;
+            }
+        }
+
+        public void removeContents(Button[] ks)
+        {
+            for (int i = 0; i < 21; i++)
+            {
+                ks[i].Content = "";
+            }
+        }
+
+        public void sonlar()
+        {
+            if (nmax > 21)
+            {
+                if (n + 8 <= nmax - 4)
+                {
+                    k18.Content = "...";
+                    k19.Content = nmax - 2;
+                    k20.Content = nmax - 1;
+                    k21.Content = nmax;
+                }
+                else
+                {
+                    if (n == nmax - 10) { k11.IsEnabled = false; }
+                    if (n == nmax - 9) { k12.IsEnabled = false; }
+                    if (n == nmax - 8) { k13.IsEnabled = false; }
+                    if (n == nmax - 7) { k14.IsEnabled = false; }
+                    if (n == nmax - 6) { k15.IsEnabled = false; }
+                    if (n == nmax - 5) { k16.IsEnabled = false; }
+                    if (n == nmax - 4) { k17.IsEnabled = false; }
+                    if (n == nmax - 3) { k18.IsEnabled = false; }
+                    if (n == nmax - 2) { k19.IsEnabled = false; }
+                    if (n == nmax - 1) { k20.IsEnabled = false; }
+                    if (n == nmax) { k21.IsEnabled = false; }
+                    k5.Content = nmax - 16;
+                    k6.Content = nmax - 15;
+                    k7.Content = nmax - 14;
+                    k8.Content = nmax - 13;
+                    k9.Content = nmax - 12;
+                    k10.Content = nmax - 11;
+                    k11.Content = nmax - 10;
+                    k12.Content = nmax - 9;
+                    k13.Content = nmax - 8;
+                    k14.Content = nmax - 7;
+                    k15.Content = nmax - 6;
+                    k16.Content = nmax - 5;
+                    k17.Content = nmax - 4;
+                    k18.Content = nmax - 3;
+                    k19.Content = nmax - 2;
+                    k20.Content = nmax - 1;
+                    k21.Content = nmax;
+                }
+            }
+        }
+
+        public void normalSirala()
+        {
+            if (nmax >= 1) { k1.Content = "1"; }
+            if (nmax >= 2) { k2.Content = "2"; }
+            if (nmax >= 3) { k3.Content = "3"; }
+            if (nmax >= 4) { k4.Content = "4"; }
+            if (nmax >= 5) { k5.Content = "5"; }
+            if (nmax >= 6) { k6.Content = "6"; }
+            if (nmax >= 7) { k7.Content = "7"; }
+            if (nmax >= 8) { k8.Content = "8"; }
+            if (nmax >= 9) { k9.Content = "9"; }
+            if (nmax >= 10) { k10.Content = "10"; }
+            if (nmax >= 11) { k11.Content = "11"; }
+            if (nmax >= 12) { k12.Content = "12"; }
+            if (nmax >= 13) { k13.Content = "13"; }
+            if (nmax >= 14) { k14.Content = "14"; }
+            if (nmax >= 15) { k15.Content = "15"; }
+            if (nmax >= 16) { k16.Content = "16"; }
+            if (nmax >= 17) { k17.Content = "17"; }
+            if (nmax < 22)
+            {
+                if (nmax >= 18) { k18.Content = "18"; }
+                if (nmax >= 19) { k19.Content = "19"; }
+                if (nmax >= 20) { k20.Content = "20"; }
+                if (nmax >= 21) { k21.Content = "21"; }
+            }
+            else
+            {
+                sonlar();
+            }
+        }
+
+        public void onceNoktali()
+        {
+            if (n < nmax - 10)
+            {
+                if (n >= 11)
+                {
+                    k10.IsEnabled = false;
+                }
+                k5.Content = (n - 5);
+                k6.Content = (n - 4);
+                k7.Content = (n - 3);
+                k8.Content = (n - 2);
+                k9.Content = (n - 1);
+                k10.Content = (n);
+                k11.Content = (n + 1);
+                k12.Content = (n + 2);
+                k13.Content = (n + 3);
+                k14.Content = (n + 4);
+                k15.Content = (n + 5);
+                k16.Content = (n + 6);
+                k17.Content = (n + 7);
+            }
+            k1.Content = "1";
+            k2.Content = "2";
+            k3.Content = "3";
+            k4.Content = "...";
+            sonlar();
+        }
+
+        public void bul()
+        {
+            Button[] ks = new Button[] { k1, k2, k3, k4, k5, k6, k7, k8, k9, k10, k11, k12, k13, k14, k15, k16, k17, k18, k19, k20, k21 };
+            removeContents(ks);
+            removeClasses(ks);
+            if (nmax >= 22)
+            {
+                if (n <= 10)
+                {
+                    if (n == 1) { k1.IsEnabled = false;}
+                    if (n == 2) { k2.IsEnabled = false;}
+                    if (n == 3) { k3.IsEnabled = false;}
+                    if (n == 4) { k4.IsEnabled = false;}
+                    if (n == 5) { k5.IsEnabled = false;}
+                    if (n == 6) { k6.IsEnabled = false;}
+                    if (n == 7) { k7.IsEnabled = false;}
+                    if (n == 8) { k8.IsEnabled = false;}
+                    if (n == 9) { k9.IsEnabled = false;}
+                    if (n == 10) { k10.IsEnabled = false;}
+                    normalSirala();
+                }
+
+                if (n > 10)
+                {
+                    onceNoktali();
+                }
+            }
+            else
+            {
+                if (n == 1) { k1.IsEnabled = false;}
+                if (n == 2) { k2.IsEnabled = false;}
+                if (n == 3) { k3.IsEnabled = false;}
+                if (n == 4) { k4.IsEnabled = false;}
+                if (n == 5) { k5.IsEnabled = false;}
+                if (n == 6) { k6.IsEnabled = false;}
+                if (n == 7) { k7.IsEnabled = false;}
+                if (n == 8) { k8.IsEnabled = false;}
+                if (n == 9) { k9.IsEnabled = false;}
+                if (n == 10) { k10.IsEnabled = false;}
+                if (n == 11) { k11.IsEnabled = false;}
+                if (n == 12) { k12.IsEnabled = false;}
+                if (n == 13) { k13.IsEnabled = false;}
+                if (n == 14) { k14.IsEnabled = false;}
+                if (n == 15) { k15.IsEnabled = false;}
+                if (n == 16) { k16.IsEnabled = false;}
+                if (n == 17) { k17.IsEnabled = false;}
+                if (n == 18) { k18.IsEnabled = false;}
+                if (n == 19) { k19.IsEnabled = false;}
+                if (n == 20) { k20.IsEnabled = false;}
+                if (n == 21) { k21.IsEnabled = false;}
+                normalSirala();
+            }
+
+            var win = Window.GetWindow(this) as Books;
+            if (win != null)
+            {
+                win.paginationChanged();
+            }
+
+            var win2 = Window.GetWindow(this) as Read;
+            if (win2 != null) {
+                win2.paginationChanged();
+            }
+        }
+
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            bul();
+        }
+
+        private void kClick(object sender, RoutedEventArgs e)
+        {
+            if (nmax != 0) {
+                bool bulma = false;
+                string s = (sender as Button).Content.ToString();
+                if (s == "<<") {
+                    n = 1;
+                } else if (s == "<") {
+                    if (n > 1) {
+                        n--;
+                    }
+
+                } else if (s == ">") {
+                    if (n < nmax) {
+                        n++;
+                    }
+                } else if (s == ">>") {
+                    n = nmax;
+                } else if (s == "..." || s == "") {
+                    Console.WriteLine("Boşluğa tıklandı");
+                    bulma = true;
+                } else {
+                    int.TryParse(s, out n);
+                }
+                if (!bulma) {
+                    bul();
+                }
+            }
+        }
+    }
+}
+
+
+///////////////////////PDFRead.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
+using System.Threading;
+using System.ComponentModel;
+using System.Security.Cryptography;
+
+namespace Bookmark
+{
+    /// <summary>
+    /// Interaction logic for BookInner.xaml
+    /// </summary>
+    public partial class PDFRead : Window
+    {
+        public MySqlConnection connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+
+        public PDFRead()
+        {
+            InitializeComponent();
+        }
+
+        public PDFRead(string isbn)
+        {
+            InitializeComponent();
+            //https://stackoverflow.com/questions/26870267/generate-integer-based-on-any-given-string-without-gethashcode
+            MD5 md5Hasher = MD5.Create();
+            var hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(isbn));
+            var ivalue = (Math.Abs(BitConverter.ToInt32(hashed, 0)) % 5) + 1;
+            wb.Source = new Uri("pack://siteoforigin:,,,/books/" + ivalue + ".pdf");
+        }
+    }
+}
+
+
+///////////////////////Read.xaml.cs
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Windows.Threading;
+
+namespace Bookmark {
+    /// <summary>
+    /// Interaction logic for Read.xaml
+    /// </summary>
+    public partial class Read : Window {
+        public int kitap_sayim = 0;
+        public MySqlConnection connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+        public BackgroundWorker bw = new BackgroundWorker();
+        public BackgroundWorker popibw = new BackgroundWorker();
+        public BackgroundWorker iyibw = new BackgroundWorker();
+        public BackgroundWorker yenibw = new BackgroundWorker();
+        public BackgroundWorker oneribw = new BackgroundWorker();
+        bool zatenCekildi = false;
+        public string aramaParamteresi = "";
+
+        public void paginationChanged() {
+            if (bw.IsBusy || popibw.IsBusy || iyibw.IsBusy || oneribw.IsBusy) {
+                Console.WriteLine("BW IS BUSY");
+                //bw.CancelAsync();
+            } else {
+                Console.WriteLine("PG CHANGED!");
+                bw.RunWorkerAsync();
+            }
+        }
+
+        private bool OpenConnection() {
+            try {
+                if (connection != null && connection.State == ConnectionState.Closed) {
+                    connection.Open();
+                }
+                return true;
+            } catch (MySqlException ex) {
+                switch (ex.Number) {
+                    case 0:
+                        MessageBox.Show("Cannot connect to server.  Contact administrator");
+                        break;
+
+                    case 1045:
+                        MessageBox.Show("Invalid username/password, please try again");
+                        break;
+                }
+                return false;
+            }
+        }
+
+        public int getPageCount() {
+            var where = aramaParamteresi != "" ? "book_title LIKE '%" + (aramaParamteresi) + "%'" : "1";
+            string query = ("SELECT CEIL(COUNT(*) / 21) as page FROM books WHERE " + where + ";");
+            string kk = "1";
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                kk = dataReader["page"] + "";
+            }
+            dataReader.Close();
+            connection.Close();
+            int sayi = 0;
+            int.TryParse(kk, out sayi);
+            return sayi;
+        }
+
+
+        public double cosine_similarity(int eslesme) {
+            //Console.WriteLine("cosine_similarity cagirildi");
+            /* Kosinüs Benzerliði 
+             * kullanýcý 1 = k1
+             * kullanýcý 2 = k2
+             * 
+             * Kosinüs benzerliði: Ýki matrisin skalar çarpýmý bölüm iki matrisin elemanlarýnýn karelerinin toplamýnýn kare kökü
+             * http://prntscr.com/ldxf4w
+             * 
+             * Aranan etiketler kullanýcýda bulunuyorsa o indexe 1 bulunmuyorsa 0 yazýyoruz.
+             * Tüm aranan kitaplar k1 kullanýcýnsa bulunduðundan dolayý k1 matrisi
+             * [1 1 1 1 ...] þeklinde olur. k1 matrisiyle diðer matrislerin skalar çarpýmý da
+             * direkt diðer matriste bulunan 1 sayýsýna eþittir " user_id2.Sum() "
+             * Paydada ise k1 ve k2 matrislerinin elemanlarýnýn karelerinin 1/2'nci kuvveti vardýr.
+             * Matrislerin elemanlarý 0 ve 1 den oluþtuðundan dolayý karelerini almamýza gerek yoktur.
+             * Diðer toplamlarýn karekökünü almamýz yeterlidir.
+             * 
+            */
+            double benzerlik = eslesme / (Math.Sqrt(kitap_sayim) * Math.Sqrt(eslesme));
+            //Console.WriteLine("cosine_similarity bitti");
+            return benzerlik;
+
+        }
+
+
+        public String find_my_books() {
+            //Console.WriteLine("Find My Books cagirildi");
+            int userid = Int32.Parse(Properties.Settings.Default.userID);
+            List<String> kitaplar = new List<String>();
+            OpenConnection();
+            MySqlDataReader dr;
+            string sorgu = " Select isbn from ratings where user_id = @userid";
+            MySqlCommand command = new MySqlCommand(sorgu, connection);
+            command.Parameters.AddWithValue("@userid", userid.ToString());
+            dr = command.ExecuteReader();
+
+            while (dr.Read()) {
+                kitaplar.Add(dr[0].ToString());
+            }
+            dr.Close();
+            dr.Dispose();
+            CloseConnection();
+            kitap_sayim = kitaplar.Count;
+
+            String arama = "";
+
+            for (int i = 0; i < kitaplar.Count; i++) {
+                if (i == kitaplar.Count - 1) {
+                    arama = arama + "'" + kitaplar[i] + "'";
+                } else {
+                    arama = arama + "'" + kitaplar[i] + "',";
+                }
+
+
+
+            }
+            //Console.WriteLine("Find My Books bitti");
+            return arama;
+
+        }
+
+        private void CloseConnection() {
+            try {
+                connection.Close();
+            } catch (MySqlException ex) {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public List<String> find_matches() {
+            //Console.WriteLine("Find Matches cagirildi");
+            int userid = Int32.Parse(Properties.Settings.Default.userID);
+            String arama = find_my_books();
+
+            OpenConnection();
+            List<String> eslesenler = new List<String>(); ;
+            MySqlDataReader dr;
+
+            string sorgu = " Select distinct user_id from ratings where isbn in (" + arama + ") and  not user_id = @userid";
+            MySqlCommand command = new MySqlCommand(sorgu, connection);
+            command.Parameters.AddWithValue("@userid", userid.ToString());
+            dr = command.ExecuteReader();
+
+            while (dr.Read()) {
+                eslesenler.Add(dr[0].ToString());
+            }
+            dr.Close();
+            dr.Dispose();
+            CloseConnection();
+            //Console.WriteLine("Find Matches bitti");
+            return eslesenler;
+
+        }
+
+        public int find_matches_value(int userid2) {
+            //Console.WriteLine("find_matches_value cagirildi");
+            int userid = Int32.Parse(Properties.Settings.Default.userID);
+            int ortak_kitap_sayisi = 0;
+            List<String> eslesenler = new List<String>(); ;
+            MySqlDataReader dr;
+            OpenConnection();
+            string sorgu = "SELECT count(*) as eslesme from ratings WHERE user_id=@id1 and user_id=@id2";
+            MySqlCommand command = new MySqlCommand(sorgu, connection);
+            command.Parameters.AddWithValue("@id1", userid.ToString());
+            command.Parameters.AddWithValue("@id2", userid2.ToString());
+            dr = command.ExecuteReader();
+            while (dr.Read()) {
+                ortak_kitap_sayisi = dr.GetInt32(dr.GetOrdinal("eslesme"));
+            }
+            dr.Close();
+            dr.Dispose();
+            CloseConnection();
+            //Console.WriteLine("find_matches_value bitti");
+            return ortak_kitap_sayisi;
+        }
+
+
+        public List<string> find_rates() {
+            //Console.WriteLine("find_rates cagirildi");
+            List<String> idler = find_matches();
+            String ids = "";
+            String arama = find_my_books();
+            int userid = Int32.Parse(Properties.Settings.Default.userID);
+
+            for (int i = 0; i < idler.Count; i++) {
+                if (i == idler.Count - 1) {
+                    ids = ids + "'" + idler[i] + "'";
+                } else {
+                    ids = ids + "'" + idler[i] + "',";
+                }
+
+            }
+
+            List<String> id = new List<String>();
+            List<String> kitap = new List<String>();
+            List<String> oy = new List<String>();
+            List<double> benzerlik = new List<double>();
+            int eslesme_sayisi;
+
+            MySqlDataReader dr;
+            OpenConnection();
+            string sorgu = "SELECT user_id , GROUP_CONCAT(isbn SEPARATOR ', ') as kitap ,GROUP_CONCAT(book_rating SEPARATOR ', ') as oy from ratings WHERE user_id in (" + ids + ") and not isbn in (" + arama + ") GROUP BY user_id";
+            MySqlCommand command = new MySqlCommand(sorgu, connection);
+            dr = command.ExecuteReader();
+            while (dr.Read()) {
+                id.Add(dr["user_id"].ToString());
+                kitap.Add(dr["kitap"].ToString());
+                oy.Add(dr["oy"].ToString());
+            }
+            dr.Close();
+            dr.Dispose();
+            CloseConnection();
+
+
+            for (int i = 0; i < id.Count; i++) {
+                try {
+                    eslesme_sayisi = find_matches_value(Int32.Parse(id[i]));
+                    benzerlik.Add(cosine_similarity(eslesme_sayisi));
+                } catch (Exception) {
+                }
+
+            }
+
+
+            List<string> oneri_kitaplar = oneri(id, kitap, oy, benzerlik);
+
+            //Console.WriteLine("find_rates bitti");
+            return oneri_kitaplar;
+        }
+
+        public int Compare(List<string> x, List<string> y) {
+            return (Int32.Parse(x[2]) > Int32.Parse(y[2])) ? 1 : (Int32.Parse(x[2]) == Int32.Parse(y[2])) ? 0 : -1;
+        }
+
+        public List<string> oneri(List<String> idler, List<String> kitaplar, List<String> oylar, List<double> oranlar) {
+            //Console.WriteLine("oneri cagirildi");
+            List<List<string>> kitap_benzerligi = new List<List<string>>();
+
+            for (int i = 0; i < idler.Count - 1; i++) {
+                List<string> tum_kitaplar = new List<string>();
+                string[] ayrik_kitap = kitaplar[i].Split(',');
+                string[] ayrik_benzerlik = oylar[i].Split(',');
+                //Console.WriteLine(ayrik_benzerlik.Length + " , " + ayrik_kitap.Length);
+                for (int j = 0; j < ayrik_benzerlik.Length; j++) {
+                    Double n;
+                    var isNumeric = Double.TryParse(ayrik_benzerlik[j], out n);
+                    if (isNumeric) {
+                        ayrik_benzerlik[j] = (n * oranlar[i]).ToString();
+                        tum_kitaplar.Add(ayrik_kitap[j]);
+                    }
+                }
+
+                for (int j = 0; j < tum_kitaplar.Count; j++) {
+                    int zaten_var = -1;
+                    for (int k = 0; k < kitap_benzerligi.Count; k++) {
+                        if (kitap_benzerligi[k][0] == tum_kitaplar[j]) {
+                            zaten_var = k;
+                        }
+
+                    }
+
+                    if (zaten_var > -1) {
+                        kitap_benzerligi[zaten_var][1] = (Int32.Parse(kitap_benzerligi[zaten_var][1]) + 1).ToString();
+                        //Console.WriteLine(ayrik_benzerlik[j]);
+                        //Console.WriteLine(Double.Parse(kitap_benzerligi[zaten_var][2].ToString()));
+                        kitap_benzerligi[zaten_var][2] = (Double.Parse(kitap_benzerligi[zaten_var][2].ToString()) + Double.Parse(ayrik_benzerlik[j].ToString())).ToString();
+                    } else {
+                        List<string> inner = new List<string>();
+                        inner.Add(tum_kitaplar[j]);
+                        inner.Add("1");
+                        inner.Add(ayrik_benzerlik[j].ToString());
+                        kitap_benzerligi.Add(inner);
+                    }
+
+                }
+
+            }
+
+            List<string> isbnler = new List<string>();
+            for (int i = 0; i < kitap_benzerligi.Count; i++) {
+                isbnler.Add(kitap_benzerligi[i][0]);
+            }
+
+            List<double> benzerlikler = new List<double>();
+            for (int i = 0; i < kitap_benzerligi.Count; i++) {
+                benzerlikler.Add(Double.Parse(kitap_benzerligi[i][2]) / Double.Parse(kitap_benzerligi[i][1]));
+            }
+
+            double tempN = 0;
+            string tempIsbn;
+            for (int i = 0; i < benzerlikler.Count - 1; i++) {
+                for (int j = i + 1; j < benzerlikler.Count; j++) {
+                    if (benzerlikler[i] > benzerlikler[j]) {
+                        tempN = benzerlikler[j];
+                        benzerlikler[j] = benzerlikler[i];
+                        benzerlikler[i] = tempN;
+                        tempIsbn = isbnler[j];
+                        isbnler[j] = isbnler[i];
+                        isbnler[i] = tempIsbn;
+                    }
+                }
+            }
+
+            //Console.WriteLine("oneri bitti");
+            return isbnler;
+        }
+
+        public void getYeni(BookCover[] books) {
+            Console.WriteLine("getYeni cagirildi");
+            string wrapperBefore = "select p1.isbn, year_of_publication, publisher, tarih, book_title, book_author, image_url_l, sum(book_rating)/count(book_rating) as yildiz, count(book_rating) as oysayisi from (SELECT * FROM books WHERE isbn IN(";
+            string yeniquery = ("SELECT isbn FROM (SELECT * FROM books ORDER BY tarih DESC LIMIT 10");
+            string wrapperAfter = ") as b)) as p1 LEFT JOIN (SELECT * FROM ratings) as p2 on p1.isbn=p2.isbn GROUP BY p1.isbn ORDER BY tarih DESC ";
+            List<string>[] list = new List<string>[9];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            list[5] = new List<string>();
+            list[6] = new List<string>();
+            list[7] = new List<string>();
+            list[8] = new List<string>();
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(wrapperBefore + yeniquery + wrapperAfter, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["book_title"] + "");
+                list[2].Add(dataReader["image_url_l"] + "");
+                list[3].Add(dataReader["yildiz"] + "");
+                list[4].Add(dataReader["oysayisi"] + "");
+                list[5].Add(dataReader["book_author"] + "");
+                list[6].Add(dataReader["year_of_publication"] + "");
+                list[7].Add(dataReader["publisher"] + "");
+                list[8].Add(dataReader["tarih"] + "");
+            }
+            dataReader.Close();
+            dataReader.Dispose();
+            connection.Close();
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = "";
+                books[i].BookName = "";
+                books[i].Image = "";
+                books[i].Stars = "";
+                books[i].VoteCount = "";
+                books[i].Author = "";
+                books[i].Publisher = "";
+                books[i].YearOfPublication = "";
+                books[i].Date = "";
+                books[i].cek();
+            }
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = list[0][i];
+                books[i].BookName = list[1][i];
+                books[i].Image = list[2][i];
+                books[i].Stars = list[3][i] != "" ? list[3][i].Split('.')[0] : "0";
+                books[i].VoteCount = list[4][i];
+                books[i].Author = list[5][i];
+                books[i].YearOfPublication = list[6][i];
+                books[i].Publisher = list[7][i];
+                books[i].Date = list[8][i];
+                books[i].cek();
+            }
+        }
+
+
+        public void getPopi(BookCover[] books) {
+            Console.WriteLine("getPopi cagirildi");
+            string wrapperBefore = "select p1.isbn, year_of_publication, publisher, tarih, book_title, book_author, image_url_l, sum(book_rating)/count(book_rating) as yildiz, count(book_rating) as oysayisi from (SELECT * FROM books WHERE isbn IN(";
+            string popiquery = ("SELECT isbn FROM (SELECT isbn, COUNT(*) as cnt FROM ratings group by isbn ORDER BY cnt DESC LIMIT 15");
+            string wrapperAfter = ") as b)) as p1 LEFT JOIN (SELECT * FROM ratings) as p2 on p1.isbn=p2.isbn GROUP BY p1.isbn ORDER BY oysayisi DESC";
+            List<string>[] list = new List<string>[9];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            list[5] = new List<string>();
+            list[6] = new List<string>();
+            list[7] = new List<string>();
+            list[8] = new List<string>();
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(wrapperBefore + popiquery + wrapperAfter, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["book_title"] + "");
+                list[2].Add(dataReader["image_url_l"] + "");
+                list[3].Add(dataReader["yildiz"] + "");
+                list[4].Add(dataReader["oysayisi"] + "");
+                list[5].Add(dataReader["book_author"] + "");
+                list[6].Add(dataReader["year_of_publication"] + "");
+                list[7].Add(dataReader["publisher"] + "");
+                list[8].Add(dataReader["tarih"] + "");
+            }
+            dataReader.Close();
+            dataReader.Dispose();
+            connection.Close();
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = "";
+                books[i].BookName = "";
+                books[i].Image = "";
+                books[i].Stars = "";
+                books[i].VoteCount = "";
+                books[i].Author = "";
+                books[i].Publisher = "";
+                books[i].YearOfPublication = "";
+                books[i].Date = "";
+                books[i].cek();
+            }
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = list[0][i];
+                books[i].BookName = list[1][i];
+                books[i].Image = list[2][i];
+                books[i].Stars = list[3][i] != "" ? list[3][i].Split('.')[0] : "0";
+                books[i].VoteCount = list[4][i];
+                books[i].Author = list[5][i];
+                books[i].YearOfPublication = list[6][i];
+                books[i].Publisher = list[7][i];
+                books[i].Date = list[8][i];
+                books[i].cek();
+            }
+        }
+
+        public void getIyi(BookCover[] books) {
+            Console.WriteLine("getİyi cagirildi");
+            string wrapperBefore = "select p1.isbn, year_of_publication, publisher, tarih, book_title, book_author, image_url_l, sum(book_rating)/count(book_rating) as yildiz, count(book_rating) as oysayisi from (SELECT * FROM books WHERE isbn IN(";
+            string iyiquery = ("SELECT isbn FROM (SELECT isbn, AVG(book_rating) as ortalama FROM ratings GROUP BY isbn ORDER BY ortalama DESC LIMIT 30");
+            string wrapperAfter = ") as b)) as p1 LEFT JOIN (SELECT * FROM ratings) as p2 on p1.isbn=p2.isbn GROUP BY p1.isbn ORDER BY oysayisi DESC";
+            List<string>[] list = new List<string>[9];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            list[5] = new List<string>();
+            list[6] = new List<string>();
+            list[7] = new List<string>();
+            list[8] = new List<string>();
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(wrapperBefore + iyiquery + wrapperAfter, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["book_title"] + "");
+                list[2].Add(dataReader["image_url_l"] + "");
+                list[3].Add(dataReader["yildiz"] + "");
+                list[4].Add(dataReader["oysayisi"] + "");
+                list[5].Add(dataReader["book_author"] + "");
+                list[6].Add(dataReader["year_of_publication"] + "");
+                list[7].Add(dataReader["publisher"] + "");
+                list[8].Add(dataReader["tarih"] + "");
+            }
+            dataReader.Close();
+            dataReader.Dispose();
+            connection.Close();
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = "";
+                books[i].BookName = "";
+                books[i].Image = "";
+                books[i].Stars = "";
+                books[i].VoteCount = "";
+                books[i].Author = "";
+                books[i].Publisher = "";
+                books[i].YearOfPublication = "";
+                books[i].Date = "";
+                books[i].cek();
+            }
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = list[0][i];
+                books[i].BookName = list[1][i];
+                books[i].Image = list[2][i];
+                books[i].Stars = list[3][i] != "" ? list[3][i].Split('.')[0] : "0";
+                books[i].VoteCount = list[4][i];
+                books[i].Author = list[5][i];
+                books[i].YearOfPublication = list[6][i];
+                books[i].Publisher = list[7][i];
+                books[i].Date = list[8][i];
+                books[i].cek();
+            }
+        }
+
+        public void getOneri(BookCover[] books, string isbnler) {
+            Console.WriteLine("getOneri cagirildi");
+            string wrapperBefore = "select p1.isbn, year_of_publication, publisher, tarih, book_title, book_author, image_url_l, sum(book_rating)/count(book_rating) as yildiz, count(book_rating) as oysayisi from (SELECT * FROM books WHERE isbn IN(";
+            string wrapperAfter = ")) as p1 LEFT JOIN (SELECT * FROM ratings) as p2 on p1.isbn=p2.isbn GROUP BY p1.isbn ORDER BY oysayisi DESC";
+            List<string>[] list = new List<string>[9];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            list[5] = new List<string>();
+            list[6] = new List<string>();
+            list[7] = new List<string>();
+            list[8] = new List<string>();
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(wrapperBefore + isbnler + wrapperAfter, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["book_title"] + "");
+                list[2].Add(dataReader["image_url_l"] + "");
+                list[3].Add(dataReader["yildiz"] + "");
+                list[4].Add(dataReader["oysayisi"] + "");
+                list[5].Add(dataReader["book_author"] + "");
+                list[6].Add(dataReader["year_of_publication"] + "");
+                list[7].Add(dataReader["publisher"] + "");
+                list[8].Add(dataReader["tarih"] + "");
+            }
+            dataReader.Close();
+            dataReader.Dispose();
+            connection.Close();
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = "";
+                books[i].BookName = "";
+                books[i].Image = "";
+                books[i].Stars = "";
+                books[i].VoteCount = "";
+                books[i].Author = "";
+                books[i].Publisher = "";
+                books[i].YearOfPublication = "";
+                books[i].Date = "";
+                books[i].cek();
+            }
+            for (int i = 0; i < 10; i++) {
+                books[i].Isbn = list[0][i];
+                books[i].BookName = list[1][i];
+                books[i].Image = list[2][i];
+                books[i].Stars = list[3][i] != "" ? list[3][i].Split('.')[0] : "0";
+                books[i].VoteCount = list[4][i];
+                books[i].Author = list[5][i];
+                books[i].YearOfPublication = list[6][i];
+                books[i].Publisher = list[7][i];
+                books[i].Date = list[8][i];
+                books[i].cek();
+            }
+        }
+
+        public void getBooks(BookCover[] books, int sayfa) {
+            Console.WriteLine("getbooks cagirildi");
+            disableClick();
+            var where = aramaParamteresi != "" ? "book_title LIKE '%" + (aramaParamteresi) + "%'" : "1";
+            string query = ("SELECT p1.isbn, year_of_publication, publisher, tarih, book_title, book_author, image_url_l, sum(book_rating)/count(book_rating) as yildiz, count(book_rating) as oysayisi FROM (SELECT * FROM books WHERE " + where + " LIMIT " + (sayfa - 1) * 21 + ",21) as p1 LEFT JOIN (SELECT * FROM ratings) as p2 on p1.isbn=p2.isbn GROUP BY p1.isbn;");
+            List<string>[] list = new List<string>[9];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            list[5] = new List<string>();
+            list[6] = new List<string>();
+            list[7] = new List<string>();
+            list[8] = new List<string>();
+            OpenConnection();
+            MySqlCommand cmd = new MySqlCommand(query, connection);
+            MySqlDataReader dataReader = cmd.ExecuteReader();
+            while (dataReader.Read()) {
+                list[0].Add(dataReader["isbn"] + "");
+                list[1].Add(dataReader["book_title"] + "");
+                list[2].Add(dataReader["image_url_l"] + "");
+                list[3].Add(dataReader["yildiz"] + "");
+                list[4].Add(dataReader["oysayisi"] + "");
+                list[5].Add(dataReader["book_author"] + "");
+                list[6].Add(dataReader["year_of_publication"] + "");
+                list[7].Add(dataReader["publisher"] + "");
+                list[8].Add(dataReader["tarih"] + "");
+            }
+            dataReader.Close();
+            connection.Close();
+            for (int i = 0; i < 21; i++) {
+                books[i].Isbn = "";
+                books[i].BookName = "";
+                books[i].Image = "";
+                books[i].Stars = "";
+                books[i].VoteCount = "";
+                books[i].Author = "";
+                books[i].Publisher = "";
+                books[i].YearOfPublication = "";
+                books[i].Date = "";
+                books[i].cek();
+            }
+            for (int i = 0; i < list[0].Count; i++) {
+                books[i].Isbn = list[0][i];
+                books[i].BookName = list[1][i];
+                books[i].Image = list[2][i];
+                books[i].Stars = list[3][i] != "" ? list[3][i].Split('.')[0] : "0";
+                books[i].VoteCount = list[4][i];
+                books[i].Author = list[5][i];
+                books[i].YearOfPublication = list[6][i];
+                books[i].Publisher = list[7][i];
+                books[i].Date = list[8][i];
+                books[i].cek();
+            }
+        }
+
+        public Read() {
+            InitializeComponent();
+
+            popibw.DoWork += delegate {
+                BookCover[] popis = new BookCover[] { popi1, popi2, popi3, popi4, popi5, popi6, popi7, popi8, popi9, popi10 };
+                getPopi(popis);
+            };
+            iyibw.DoWork += delegate {
+                BookCover[] iyis = new BookCover[] { iyi1, iyi2, iyi3, iyi4, iyi5, iyi6, iyi7, iyi8, iyi9, iyi10 };
+                getIyi(iyis);
+            };
+            yenibw.DoWork += delegate {
+                BookCover[] yenis = new BookCover[] { yeni1, yeni2, yeni3, yeni4, yeni5, yeni6, yeni7, yeni8, yeni9, yeni10 };
+                getYeni(yenis);
+            };
+            oneribw.DoWork += delegate {
+                BookCover[] oneris = new BookCover[] { oneri1, oneri2, oneri3, oneri4, oneri5, oneri6, oneri7, oneri8, oneri9, oneri10 };
+                List<string> oneriler = find_rates();
+                var maxC = oneriler.Count > 20 ? 20 : oneriler.Count;
+                string kayit = "";
+                for (int i = 0; i < maxC; i++) {
+                    kayit += "'"+(oneriler[oneriler.Count() - 1 - i].ToString()).Trim()+"',";
+                }
+                kayit = kayit.Remove(kayit.Length - 1);
+                getOneri(oneris, kayit);
+            };
+
+            popibw.RunWorkerCompleted += delegate {
+                Console.WriteLine("POPİ BİTTİ");
+                this.Dispatcher.Invoke(() => {
+                    popiyukleniyor.Visibility = Visibility.Hidden;
+                });
+                iyibw.RunWorkerAsync();
+            };
+
+            iyibw.RunWorkerCompleted += delegate {
+                Console.WriteLine("İYİ BİTTİ");
+                this.Dispatcher.Invoke(() => {
+                    iyiyukleniyor.Visibility = Visibility.Hidden;
+                });
+                yenibw.RunWorkerAsync();
+            };
+
+            yenibw.RunWorkerCompleted += delegate {
+                Console.WriteLine("YENİ BİTTİ");
+                this.Dispatcher.Invoke(() => {
+                    yeniyukleniyor.Visibility = Visibility.Hidden;
+                });
+                oneribw.RunWorkerAsync();
+            };
+
+            oneribw.RunWorkerCompleted += delegate {
+                Console.WriteLine("ÖNERİ BİTTİ");
+                this.Dispatcher.Invoke(() => {
+                    oneriyukleniyor.Visibility = Visibility.Hidden;
+                    pg.IsEnabled = true;
+                    aramakismi.IsEnabled = true;
+                });
+            };
+
+
+            bw.DoWork += delegate {
+                BookCover[] books = new BookCover[] { book1, book2, book3, book4, book5, book6, book7, book8, book9, book10, book11, book12, book13, book14, book15, book16, book17, book18, book19, book20, book21 };
+                getBooks(books, pg.n);
+            };
+            bw.RunWorkerCompleted += delegate {
+                Console.WriteLine("BİTTİ");
+                enableClick();
+                if (!zatenCekildi) {
+                    popibw.RunWorkerAsync();
+                    zatenCekildi = true;
+                }
+            };
+            label.Content = "Hoş geldin, " + Properties.Settings.Default.userNick;
+            pg.nmax = getPageCount();
+            pg.bul();
+
+        }
+
+
+        public void disableClick() {
+            this.Dispatcher.Invoke(() => {
+                yukleniyor.Visibility = Visibility.Visible;
+                Tumu.IsEnabled = false;
+            });
+        }
+
+        public void enableClick() {
+            this.Dispatcher.Invoke(() => {
+                yukleniyor.Visibility = Visibility.Hidden;
+                Tumu.IsEnabled = true;
+            });
+        }
+
+        private void araButonu_Click(object sender, RoutedEventArgs e) {
+            if (kitapAraInput.Text == "") {
+                aramaLabel.Content = "Tüm Kitaplar";
+                notSearch.Visibility = Visibility.Visible;
+                kucult.Height = 3000;
+            } else {
+                aramaLabel.Content = "Aranan: " + kitapAraInput.Text;
+                notSearch.Visibility = Visibility.Collapsed;
+                kucult.Height = 780;
+            }
+
+            aramaParamteresi = kitapAraInput.Text;
+            pg.n = 1;
+            pg.nmax = getPageCount();
+            pg.bul();
+        }
+
+        private void book_MouseDown(object sender, MouseButtonEventArgs e) {
+            BookCover selectedBook = (BookCover)sender;
+            Console.WriteLine(selectedBook.Isbn);
+            string[] values = { selectedBook.Isbn, selectedBook.BookName, selectedBook.Stars, selectedBook.VoteCount, selectedBook.Image, selectedBook.Author, selectedBook.Publisher, selectedBook.YearOfPublication, selectedBook.Date, "ready" };
+            BookInner book = new BookInner(values);
+            book.Show();
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e) {
+            System.Windows.Application.Current.Shutdown();
+        }
+
+        private void AYRAC_MouseDown(object sender, MouseButtonEventArgs e) {
+            kitapAraInput.Text = "";
+            aramaLabel.Content = "Tüm Kitaplar";
+            notSearch.Visibility = Visibility.Visible;
+            kucult.Height = 3000;
+            aramaParamteresi = "";
+            pg.n = 1;
+            pg.nmax = getPageCount();
+            pg.bul();
+        }
+
+        private void kitapAraInput_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter || e.Key == Key.Return) {
+                aramaLabel.Content = "Aranan: " + kitapAraInput.Text;
+                notSearch.Visibility = Visibility.Collapsed;
+                kucult.Height = 780;
+                aramaParamteresi = kitapAraInput.Text;
+                pg.n = 1;
+                pg.nmax = getPageCount();
+                pg.bul();
+            }
+        }
+    }
+}
+
+///////////////////////Register.xaml.cs
+
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+
+namespace Bookmark {
+    /// <summary>
+    /// Interaction logic for Register.xaml
+    /// </summary>
+    public partial class Register : Window {
+        public MySqlConnection connection;
+        public MainWindow reelMain;
+
+
+        public void hataVer(String s) {
+            textBlock.Text = s;
+        }
+
+        public void hataVer(String s, TextBox k) {
+            textBlock.Text = s;
+            k.Focus();
+        }
+
+        public void hataVer(String s, PasswordBox k) {
+            textBlock.Text = s;
+            k.Focus();
+        }
+
+        public void hataSil() {
+            textBlock.Text = "";
+        }
+
+
+        public Register() {
+            InitializeComponent();
+        }
+
+        public Register(MainWindow main) {
+            InitializeComponent();
+            reelMain = main;
+        }
+
+        private void kayitIslemi(object sender, RoutedEventArgs e) {
+            connection = new MySqlConnection("SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;");
+            String k = kullaniciAdiBox.Text;
+            String y = yasBox.Text;
+            String b = konumBox.Text;
+            String s = sifreBox.Password;
+            Console.WriteLine("Kayıt butonuna tıklandı, kontroller yapılıyor...");
+            //Kullanıcı adı uygun mu?
+            if (Regex.IsMatch(k, "^[a-zA-Z0-9]+$") == true) {
+                hataSil();
+                //Konum uygun mu?
+                if (b.Length > 0) {
+                    hataSil();
+                    //Yaş uygun mu?
+                    int n;
+                    var isNumeric = int.TryParse(y, out n);
+                    if (isNumeric && n >= 0 && n < 120) {
+                        hataSil();
+                        //Şifre uygun mu?
+                        if (s.Length >= 3) {
+                            Console.WriteLine("Kayıt işlemi başladı...");
+
+                            connection.Open();
+                            string sorgu = "SELECT count(*)>0 as userExists FROM users WHERE nick=@k";
+                            MySqlCommand command = new MySqlCommand(sorgu, connection);
+                            MySqlDataReader dr;
+                            command.Parameters.AddWithValue("@k", k);
+                            dr = command.ExecuteReader();
+                            if (dr.Read()) {
+                                if (dr.GetInt32("userExists") == 0) {
+                                    connection.Close();
+                                    connection.Open();
+                                    string sorgu2 = "INSERT INTO users (nick, pw, location, age) Values (@k, @s, @b, @y)";
+                                    MySqlCommand command2 = new MySqlCommand(sorgu2, connection);
+                                    command2.Parameters.AddWithValue("@k", k);
+                                    command2.Parameters.AddWithValue("@s", s);
+                                    command2.Parameters.AddWithValue("@b", b);
+                                    command2.Parameters.AddWithValue("@y", y);
+                                    command2.ExecuteNonQuery();
+                                    var lg = new Login(reelMain);
+                                    lg.girisKullaniciAdiBox.Text = k;
+                                    lg.girisSifreBox.Password = s;
+                                    lg.login();
+                                    this.Hide();
+                                } else {
+                                    MessageBox.Show("Bu kullanıcı adıyla kayıtlı bir kullanıcı var. Lütfen farklı bir kullanıcı adı seçin.");
+                                }
+                            } else {
+                                MessageBox.Show("Bir hata meydana geldi");
+                            }
+                            connection.Close();
+
+
+                        } else {
+                            hataVer("Hata: Şifreniz en az 3 karakter olmalıdır.", sifreBox);
+                        }
+                    } else {
+                        hataVer("Hata: Lütfen yaşınızı doğru girin.", yasBox);
+                    }
+
+                } else {
+                    hataVer("Hata: Lütfen konumunuzu doğru girin.", konumBox);
+                }
+            } else {
+                hataVer("Hata: Kullanıcı adı geçersiz karakterler içeriyor.", kullaniciAdiBox);
+            }
+        }
+
+        private void geriGel(object sender, MouseButtonEventArgs e) {
+            this.Close();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            try {
+                reelMain.Show();
+            } catch (Exception) { }
+        }
+    }
+}
+
+////////////////////////////////ADMIN EKRANI
+///////////////////////App.xaml.cs
+
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace yoneticipanel
+{
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
+    public partial class App : Application
+    {
+    }
+}
+
+///////////////////////kitap_ekle
+
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace yoneticipanel
+{
+    /// <summary>
+    /// Interaction logic for kitap_ekle.xaml
+    /// </summary>
+    public partial class kitap_ekle : Window
+    {
+        string connectionString = "SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;";
+        string query;
+        public kitap_ekle()
+        {
+            InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string isbn1 = "'" + isbn.Text + "',";
+            string title1 = "'" + title.Text + "',";
+            string author1 = "'" + author.Text + "',";
+            string year1 = "'" + year.Text + "',";
+            string publisher1 = "'" + publisher.Text + "',";
+            string imgs1 = "'" + imgs.Text + "',";
+            string imgm1 = "'" + imgm.Text + "',";
+            string imgl1 = "'" + imgl.Text + "'";
+
+            string tum = isbn1 + title1 + author1 + year1 + publisher1 + imgs1 + imgm1 + imgl1;
+            query = ("INSERT INTO books (isbn, book_title, book_author,year_of_publication,publisher,image_url_s,image_url_m,image_url_l)" +
+    " VALUES(" + tum + "); ");
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlDataReader dr;
+            MySqlCommand command = new MySqlCommand(query, connection);
+            connection.Open();
+            dr = command.ExecuteReader();
+            while (dr.Read())
+            {
+
+            }
+            connection.Close();
+            this.Close();
+        }
+    }
+}
+
+
+///////////////////////kitap_sil
+
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace yoneticipanel
+{
+    /// <summary>
+    /// Interaction logic for kitap_sil.xaml
+    /// </summary>
+    public partial class kitap_sil : Window
+    {
+
+        string connectionString = "SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;";
+        public kitap_sil()
+        {
+            InitializeComponent();
+
+
+            ara.Items.Add("isbn");
+            ara.Items.Add("book_title");
+            ara.Items.Add("book_author");
+            ara.Items.Add("year_of_publication");
+            ara.Items.Add("image_url_s");
+            ara.Items.Add("image_url_m");
+            ara.Items.Add("image_url_l");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+            string selected = ara.SelectedValue.ToString();
+
+            string Query = "DELETE FROM books WHERE " + selected + " = '" + metin.Text + "' ;";
+            MessageBox.Show(Query);
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand(Query, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+            this.Close();
+        }
+
+    }
+}
+
+
+///////////////////////kullanıcı_ekle
+
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace yoneticipanel
+{
+    /// <summary>
+    /// Interaction logic for kullanıcı_ekle.xaml
+    /// </summary>
+    public partial class kullanıcı_ekle : Window
+    {
+        string connectionString = "SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;";
+        string query;
+        public kullanıcı_ekle()
+        {
+            InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string nick ="'"+ t1.Text + "',";
+            string pw = "'" + t2.Password.ToString() + "',";
+            string location = "'" + t3.Text +","+ t4.Text + "',";
+            string age = "'" + t5.Text + "'";
+            string tum =nick+pw+location+age;
+            query = ("INSERT INTO users (nick, pw, location,age)" +
+    " VALUES(" + tum + "); ");
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlDataReader dr;
+            MySqlCommand command = new MySqlCommand(query, connection);
+            connection.Open();
+            dr = command.ExecuteReader();
+            while (dr.Read())
+            {
+
+            }
+            connection.Close();
+            this.Close();
+        }
+    }
+}
+
+
+///////////////////////kullanıcı_sil
+
+using MySql.Data.MySqlClient;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace yoneticipanel
+{
+    /// <summary>
+    /// Interaction logic for kullanici_sil.xaml
+    /// </summary>
+    public partial class kullanici_sil : Window
+    {
+        string connectionString = "SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;";
+
+        public kullanici_sil()
+        {
+            InitializeComponent();
+
+            ara.Items.Add("user id");
+            ara.Items.Add("nick");
+            ara.Items.Add("pw");
+            ara.Items.Add("location");
+            ara.Items.Add("age");
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+               string selected = ara.SelectedValue.ToString();
+
+                string Query = "DELETE FROM users WHERE "+selected+" = '"+metin.Text+"' ;";
+                MySqlConnection connection = new MySqlConnection(connectionString);
+                MySqlCommand command = new MySqlCommand(Query, connection);
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            this.Close();
+         
+        }
+    }
+}
+
+
+///////////////////////MainWindow
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+
+namespace yoneticipanel
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    
+ 
+    public partial class MainWindow : Window
+    {
+
+        string connectionString = "SERVER=localhost;DATABASE=bookmark;UID=root;PASSWORD=;SslMode=none;";
+        
+
+
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            /*
+            string connectionString = "SERVER=localhost;DATABASE=yazlab1;UID=root;PASSWORD=;SslMode=none;";
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("select * from books", connection);
+            connection.Open();
+            DataTable dt = new DataTable();
+            dt.Load(command.ExecuteReader());
+            connection.Close();
+            dtGrid.DataContext = dt;*/
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("select * from books", connection);
+            connection.Open();
+            DataTable dt = new DataTable();
+            dt.Load(command.ExecuteReader());
+            connection.Close();
+            dtGrid.DataContext = dt;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("select * from users", connection);
+            connection.Open();
+            DataTable dt = new DataTable();
+            dt.Load(command.ExecuteReader());
+            connection.Close();
+            dtGrid.DataContext = dt;
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("SELECT isbn, COUNT(*) as cnt FROM ratings group by isbn ORDER BY cnt DESC LIMIT 15;", connection);
+            connection.Open();  
+            DataTable dt = new DataTable();
+            dt.Load(command.ExecuteReader());
+            connection.Close();
+            dtGrid.DataContext = dt;
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            kitap_ekle pencere = new kitap_ekle();
+            pencere.Show();
+           
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            kullanıcı_ekle pencere = new kullanıcı_ekle();
+            pencere.Show();
+            
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("SELECT * FROM books ORDER BY tarih DESC LIMIT 9;", connection);
+            connection.Open();
+            DataTable dt = new DataTable();
+            dt.Load(command.ExecuteReader());
+            connection.Close();
+            dtGrid.DataContext = dt;
+
+        }
+
+        private void Button_Click_6(object sender, RoutedEventArgs e)
+        {
+            kitap_sil pencere = new kitap_sil();
+            pencere.Show();
+        }
+
+        private void Button_Click_7(object sender, RoutedEventArgs e)
+        {
+            kullanici_sil pencere = new kullanici_sil();
+            pencere.Show();
+        }
+
+        private void Button_Click_8(object sender, RoutedEventArgs e)
+        {
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            MySqlCommand command = new MySqlCommand("SELECT isbn, AVG(book_rating) as ortalama FROM ratings GROUP BY isbn ORDER BY ortalama DESC LIMIT 30;", connection);
+            connection.Open();
+            DataTable dt = new DataTable();
+            dt.Load(command.ExecuteReader());
+            connection.Close();
+            dtGrid.DataContext = dt;
+        }
+    }
+
+     
+
+    }
+

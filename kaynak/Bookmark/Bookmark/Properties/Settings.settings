@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Bookmark.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="userID" Type="System.String" Scope="User">
+      <Value Profile="(Default)">278859</Value>
+    </Setting>
+    <Setting Name="userOy" Type="System.String" Scope="User">
+      <Value Profile="(Default)">11</Value>
+    </Setting>
+    <Setting Name="userNick" Type="System.String" Scope="User">
+      <Value Profile="(Default)">oguz123</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

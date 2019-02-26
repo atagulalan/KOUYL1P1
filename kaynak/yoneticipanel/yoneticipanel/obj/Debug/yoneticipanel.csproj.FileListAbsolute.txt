@@ -1,0 +1,54 @@
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csprojAssemblyReference.cache
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\MainWindow.g.cs
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\App.g.cs
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel_MarkupCompile.cache
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel_MarkupCompile.lref
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\yoneticipanel.exe.config
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\yoneticipanel.exe
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\yoneticipanel.pdb
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\MySql.Data.dll
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\Google.Protobuf.dll
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\MySql.Data.xml
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\MainWindow.baml
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.g.resources
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.Properties.Resources.resources
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csproj.GenerateResource.cache
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csproj.CoreCompileInputs.cache
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csproj.CopyComplete
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.exe
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.pdb
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_ekle.g.cs
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanıcı_ekle.g.cs
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_ekle.baml
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanıcı_ekle.baml
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_sil.g.cs
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanici_sil.g.cs
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_sil.baml
+C:\Users\o_guz\Desktop\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanici_sil.baml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\yoneticipanel.exe.config
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\yoneticipanel.exe
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\yoneticipanel.pdb
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\MySql.Data.dll
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\Google.Protobuf.dll
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\bin\Debug\MySql.Data.xml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csprojAssemblyReference.cache
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_ekle.g.cs
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_sil.g.cs
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanici_sil.g.cs
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanıcı_ekle.g.cs
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\MainWindow.g.cs
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\App.g.cs
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel_MarkupCompile.cache
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel_MarkupCompile.lref
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_ekle.baml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kitap_sil.baml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanici_sil.baml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\kullanıcı_ekle.baml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\MainWindow.baml
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.g.resources
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.Properties.Resources.resources
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csproj.GenerateResource.cache
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csproj.CoreCompileInputs.cache
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.csproj.CopyComplete
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.exe
+C:\Users\o_guz\Desktop\Bir takım denemeler\dersler\c#\adminpanel\yoneticipanel\yoneticipanel\obj\Debug\yoneticipanel.pdb

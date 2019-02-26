@@ -1,0 +1,27 @@
+﻿<Window x:Class="Bookmark.Register"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bookmark"
+        mc:Ignorable="d" Height="614" Width="438" Icon="x.ico" WindowStartupLocation="CenterScreen" ShowInTaskbar="False" ShowActivated="False" TextOptions.TextFormattingMode="Display" ResizeMode="NoResize" Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="label" Content="Kayıt Ol" HorizontalAlignment="Center" Margin="10,10,10,0" Width="410" FontFamily="Montserrat" FontSize="55" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontWeight="Light" Height="104" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+        <TextBox Tag="Kullanıcı Adı" x:Name="kullaniciAdiBox" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" Grid.Column="1" Margin="33,150,0,0" Padding="0" Panel.ZIndex="3" TabIndex="4"/>
+        <TextBox Tag="Konum" x:Name="konumBox" HorizontalAlignment="Left" TextWrapping="Wrap" Width="242" Grid.Column="1" Margin="33,200,0,0" Padding="0" Height="30" VerticalAlignment="Top" Panel.ZIndex="4" TabIndex="6"/>
+        <TextBox Tag="Yaş" x:Name="yasBox" HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Top" Width="242" Grid.Column="1" Margin="33,250,0,0" Panel.ZIndex="5" TabIndex="7"/>
+        <PasswordBox  HorizontalAlignment="Left" Tag="Şifre" x:Name="sifreBox" VerticalAlignment="Top" Width="242" Grid.Column="1" Margin="33,300,0,0" IsManipulationEnabled="True" Foreground="#FF333333" Panel.ZIndex="2" TabIndex="9"/>
+        <Label x:Name="geriLabeli" Content="Geri" Grid.Column="1" HorizontalAlignment="Left" Margin="103,416,0,0" VerticalAlignment="Top" Width="101" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="33" FontSize="22" Padding="5,0" FontWeight="Light" Cursor="Hand" MouseDown="geriGel"/>
+        <Button Style="{StaticResource TabButtonPink}" x:Name="kayitOlButonu" Content="Kayıt Ol" Margin="13,475,13,0" Click="kayitIslemi" FontSize="22" VerticalContentAlignment="Center" Padding="1" Cursor="Hand" Grid.Column="1" FontFamily="Montserrat" TabIndex="10" Height="50" VerticalAlignment="Top"/>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Margin="33,352,0,0" Grid.Column="1" Width="242" Height="59" FontSize="14" Foreground="#FFF86E8F"/>
+    </Grid>
+</Window>
